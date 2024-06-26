@@ -33,7 +33,7 @@ export const AppProvider = ({
 }) => {
   const [tasks, setTasks] = useState<
     { task: string; completed: boolean }[]
-  >([{ task: "Task 1", completed: false }]);
+  >([]);
   const [currentTask, setCurrentTask] = useState(0);
 
   // Timer Counter

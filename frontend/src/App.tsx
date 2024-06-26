@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ToDoList from "./component/ToDoList";
 import { useAppContext } from "./context/context";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function App() {
   const { tasks, setTasks, totalTime, workingTime } =
@@ -11,7 +11,7 @@ function App() {
   const [showError, setShowError] = useState(false);
   const [showWorkingTotalTime, setShowWorkingTotalTime] =
     useState(false);
-
+  const navigate = useNavigate();
   const addTask = () => {
     if (currentInput) {
       const check = tasks.some(
@@ -47,11 +47,49 @@ function App() {
     }
   };
 
+  const [startResumeButton, setStartResumeButton] =
+    useState("");
+
   useEffect(() => {
     if (totalTime > 0) {
       setShowWorkingTotalTime(true);
     }
   }, []);
+
+  const onStartResumeFinishBtnClicked = () => {
+    if (startResumeButton === "Finished") {
+      navigate("/finished");
+    } else {
+      navigate("/working");
+    }
+  };
+
+  useEffect(() => {
+    if (tasks.length > 0) {
+      const find = tasks.find((item) => {
+        if (item.completed === false) {
+          return "Found One";
+        }
+      });
+
+      if (find) {
+        if (showWorkingTotalTime) {
+          setStartResumeButton("Resume");
+        } else {
+          
+          setStartResumeButton("Start Working");
+        }
+      } else {
+        setStartResumeButton("Finished");
+      }
+    } else {
+      
+      setStartResumeButton("Start Working");
+    }
+  }, [
+    tasks.filter((elem) => elem.completed === false).length,
+    showWorkingTotalTime,
+  ]);
 
   return (
     <section className="flex flex-col h-screen bg-black">
@@ -81,14 +119,12 @@ function App() {
               </p>
             </>
           )}
-          <Link
-            to={"/working"}
+          <button
             className="primaryButton w-fit"
+            onClick={() => onStartResumeFinishBtnClicked()}
           >
-            {showWorkingTotalTime
-              ? "Resume"
-              : "Start Working"}
-          </Link>
+            {startResumeButton}
+          </button>
         </section>
         {/* Add new Task */}
         <section className="flex flex-col items-center w-full">

@@ -37,14 +37,39 @@ const WorkingPage = () => {
     if (workingTime > 0) {
       setCurrentTime(workingTime);
     }
+    const filter = tasks.filter(
+      (item) => item.completed === false
+    );
+    const index = tasks.indexOf(filter[0]);
+
+    setCurrentTask(index);
   }, []);
 
   const onNextTaskBtnClicked = () => {
-    if (currentTask === tasks.length - 1) {
+    if (nextTask === "No Task") {
+      setContinueTotalTimer(false);
+      navigate("/finished");
     } else {
-      setCurrentTime(0);
-      tasks[currentTask].completed = true
-      setCurrentTask((prev) => prev + 1);
+      if (tasks[currentTask]) {
+        setCurrentTime(0);
+        setTotalTime((prev) => prev + currentTime);
+        tasks[currentTask].completed = true;
+        const find = tasks.find((item, index) => {
+          if (
+            item.completed === false &&
+            index > currentTask
+          ) {
+            return tasks[index];
+          }
+        });
+        if (find) {
+          setPreviousTask(tasks[currentTask].task);
+          const index = tasks.indexOf(find);
+          setCurrentTask(index);
+        } else {
+          console.log("Something went wrong");
+        }
+      }
     }
   };
 
@@ -58,13 +83,11 @@ const WorkingPage = () => {
   const onPauseBtnClicked = () => {
     setContinueTotalTimer(false);
     setWorkingTime(currentTime);
-    console.log(currentTask);
-    if (currentTask !== 0) {
-      setTotalTime((prev) => prev + currentTime);
-      console.log("This went");
-    } else {
-      setTotalTime(currentTime);
-    }
+
+    setTotalTime(
+      (prev) => prev + currentTime - workingTime
+    );
+
     navigate("/");
   };
 
@@ -82,20 +105,29 @@ const WorkingPage = () => {
   };
 
   // Setting tasks
-  let nextTask;
-  let previousTask;
+  const [nextTask, setNextTask] = useState("");
+  const [previousTask, setPreviousTask] =
+    useState("No task");
 
-  if (tasks[currentTask + 1] !== undefined) {
-    nextTask = tasks[currentTask + 1].task;
-  } else {
-    nextTask = "No Task";
-  }
-
-  if (tasks[currentTask - 1] !== undefined) {
-    previousTask = tasks[currentTask - 1].task;
-  } else {
-    previousTask = "No Task";
-  }
+  useEffect(() => {
+    if (tasks[currentTask + 1] !== undefined) {
+      const find = tasks.find((item, index) => {
+        if (
+          item.completed === false &&
+          index > currentTask
+        ) {
+          return tasks[index].task;
+        }
+      });
+      if (find) {
+        setNextTask(find.task);
+      } else {
+        setNextTask("No Task");
+      }
+    } else {
+      setNextTask("No Task");
+    }
+  }, [currentTask]);
 
   return (
     <>
@@ -136,7 +168,7 @@ const WorkingPage = () => {
               className="primaryButton w-[60%]"
               onClick={() => onNextTaskBtnClicked()}
             >
-              {currentTask === tasks.length - 1
+              {nextTask === "No Task"
                 ? "Finish"
                 : "Next Task"}
             </button>
