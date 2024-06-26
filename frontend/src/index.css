@@ -8,7 +8,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    @apply text-white;
+    @apply text-white bg-black;
   }
   h1 {
     font-size: 48px;
@@ -29,7 +29,13 @@
     font-size: 24px;
     font-family: JetBrains Mono, sans-serif;
     font-weight: 500;
-    @apply p-2  bg-primary rounded-3xl w-fit;
+    @apply p-2 bg-primary rounded-3xl;
+  }
+  .secondaryButton {
+    font-size: 24px;
+    font-family: JetBrains Mono, sans-serif;
+    font-weight: 500;
+    @apply p-2 bg-secondary rounded-3xl;
   }
 }
 
@@ -38,11 +44,6 @@
     font-size: 24px;
     font-family: Andika, sans-serif;
     font-weight: 400;
-  }
-  .buttonText {
-    font-size: 24px;
-    font-family: JetBrains Mono, sans-serif;
-    font-weight: 500;
   }
   .linkText {
     font-size: 20px;

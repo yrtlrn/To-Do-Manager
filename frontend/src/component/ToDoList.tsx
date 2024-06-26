@@ -1,16 +1,7 @@
-type ToDoListProps = {
-  tasks: { task: string; completed: boolean }[];
-  setTasks: (
-    value: React.SetStateAction<
-      {
-        task: string;
-        completed: boolean;
-      }[]
-    >
-  ) => void;
-};
+import { useAppContext } from "../context/context";
 
-const ToDoList = ({ tasks, setTasks }: ToDoListProps) => {
+const ToDoList = () => {
+  const { tasks, setTasks } = useAppContext();
   const deleteTask = (task: string) => {
     const taskCheck = tasks.find(
       (ele) => ele.task === task
@@ -45,6 +36,7 @@ const ToDoList = ({ tasks, setTasks }: ToDoListProps) => {
         <input
           type="checkbox"
           className="w-6 border-b-2 rounded-full border-secondary accent-accent"
+          checked={task.completed}
           onChange={(e) => changeCompleted(e, task.task)}
         />
         <p className="col-span-2 text-left taskText group-hover:text-center">
@@ -52,7 +44,7 @@ const ToDoList = ({ tasks, setTasks }: ToDoListProps) => {
         </p>
         <div className="flex justify-end">
           <span
-            className="flex items-center justify-center text-primary material-symbols-outlined text-r-3xl"
+            className="flex items-center justify-center text-primary material-symbols-outlined text-r-3xl hover:scale-110 hover:cursor-pointer"
             onClick={() => deleteTask(task.task)}
           >
             delete

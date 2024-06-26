@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ToDoList from "./component/ToDoList";
+import { useAppContext } from "./context/context";
+import { Link } from "react-router-dom";
 
 function App() {
-  const [tasks, setTasks] = useState<
-    { task: string; completed: boolean }[]
-  >([]);
+  const { tasks, setTasks, totalTime, workingTime } =
+    useAppContext();
+
   const [currentInput, setcurrentInput] = useState("");
   const [showError, setShowError] = useState(false);
+  const [showWorkingTotalTime, setShowWorkingTotalTime] =
+    useState(false);
 
   const addTask = () => {
     if (currentInput) {
@@ -34,8 +38,6 @@ function App() {
     }
   };
 
-  
-
   const handleKeyUp = (
     e: React.KeyboardEvent<HTMLInputElement>
   ) => {
@@ -45,11 +47,17 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    if (totalTime > 0) {
+      setShowWorkingTotalTime(true);
+    }
+  }, []);
+
   return (
     <section className="flex flex-col h-screen bg-black">
       <main className="flex flex-col justify-around flex-1 gap-10">
         {/* Total Tasks */}
-        <section className="flex flex-col items-center w-full">
+        <section className="flex flex-col items-center w-full gap-3">
           <h2>
             {tasks.length > 0
               ? `Tasks Left: ${
@@ -59,9 +67,28 @@ function App() {
                 }`
               : "No Tasks"}
           </h2>
-          <button className="primaryButton">
-            Start Working
-          </button>
+          {showWorkingTotalTime && (
+            <>
+              <p className="infoText text-accent">{`Working Time - ${new Date(
+                workingTime * 1000
+              )
+                .toISOString()
+                .substring(11, 19)}`}</p>
+              <p className="infoText text-accent">
+                {`Total Time - ${new Date(totalTime * 1000)
+                  .toISOString()
+                  .substring(11, 19)}`}
+              </p>
+            </>
+          )}
+          <Link
+            to={"/working"}
+            className="primaryButton w-fit"
+          >
+            {showWorkingTotalTime
+              ? "Resume"
+              : "Start Working"}
+          </Link>
         </section>
         {/* Add new Task */}
         <section className="flex flex-col items-center w-full">
@@ -78,7 +105,7 @@ function App() {
               id="taskInput"
             />
             <button
-              className="flex-none px-10 primaryButton"
+              className="flex-none px-10 mx-1 primaryButton w-fit"
               onClick={() => addTask()}
             >
               Add
@@ -96,7 +123,7 @@ function App() {
           {tasks.length <= 0 ? (
             <div>List is empty</div>
           ) : (
-           <ToDoList tasks={tasks} setTasks={setTasks} />
+            <ToDoList />
           )}
         </section>
       </main>
