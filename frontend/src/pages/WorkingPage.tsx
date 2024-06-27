@@ -129,6 +129,24 @@ const WorkingPage = () => {
     }
   }, [currentTask]);
 
+  useEffect(() => {
+    const unloadCallback = (event: {
+      preventDefault: () => void;
+      returnValue: string;
+    }) => {
+      event.preventDefault();
+      event.returnValue = "";
+      return "";
+    };
+    window.addEventListener("beforeunload", unloadCallback);
+    return () =>
+      window.removeEventListener(
+        "beforeunload",
+        unloadCallback
+      );
+  }, []);
+
+
   return (
     <>
       {tasks.length <= 0 ? (

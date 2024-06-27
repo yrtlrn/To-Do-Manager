@@ -76,14 +76,12 @@ function App() {
         if (showWorkingTotalTime) {
           setStartResumeButton("Resume");
         } else {
-          
           setStartResumeButton("Start Working");
         }
       } else {
         setStartResumeButton("Finished");
       }
     } else {
-      
       setStartResumeButton("Start Working");
     }
   }, [
@@ -91,8 +89,25 @@ function App() {
     showWorkingTotalTime,
   ]);
 
+  useEffect(() => {
+    const unloadCallback = (event: {
+      preventDefault: () => void;
+      returnValue: string;
+    }) => {
+      event.preventDefault();
+      event.returnValue = "";
+      return "";
+    };
+    window.addEventListener("beforeunload", unloadCallback);
+    return () =>
+      window.removeEventListener(
+        "beforeunload",
+        unloadCallback
+      );
+  }, []);
+
   return (
-    <section className="flex flex-col h-screen bg-black">
+    <section className="flex flex-col h-screen bg-black md:mx-5 lg:mx-10">
       <main className="flex flex-col justify-around flex-1 gap-10">
         {/* Total Tasks */}
         <section className="flex flex-col items-center w-full gap-3">
